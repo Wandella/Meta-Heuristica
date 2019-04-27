@@ -16,8 +16,8 @@ import java.util.Random;
 public class Vizinhanca extends SolucaoInicial {
 
     public void exibe_matriz(int m[][]) {
-        for (int i = 0; i < solucao_inicial.size(); i++) {
-            for (int j = 0; j < solucao_inicial.size() + 2; j++) {
+        for (int i = 0; i < BuscaTabuMochila01.solucao_corrente.size(); i++) {
+            for (int j = 0; j < BuscaTabuMochila01.solucao_corrente.size() + 2; j++) {
                 System.out.print(m[i][j] + " ");
             }
 
@@ -26,22 +26,21 @@ public class Vizinhanca extends SolucaoInicial {
 
     }
 
-    public void preencheMatriz(int matriz[][]) {
-
-        for (int i = 0; i < solucao_inicial.size(); i++) {
-            for (int j = 0; j < solucao_inicial.size(); j++) {
-                matriz[i][j] = solucao_inicial.get(j);
+    public int[][] preencheMatriz(int matriz[][]) {
+        for (int i = 0; i < BuscaTabuMochila01.solucao_inicial.size(); i++) {
+            for (int j = 0; j < BuscaTabuMochila01.solucao_inicial.size(); j++) {
+                matriz[i][j] = BuscaTabuMochila01.solucao_corrente.get(j);
             }
         }
-        // return matriz;
+        return matriz;
     }
 
     @SuppressWarnings("empty-statement")
     public void vizinhanca_solucao_inicial(int matriz[][]) {
         Random gerador = new Random();
         int sorteio = 0;
-        for (int i = 0; i < solucao_inicial.size(); i++) {
-            for (int j = 0; j < solucao_inicial.size() + 2; j++) {
+        for (int i = 0; i < BuscaTabuMochila01.solucao_corrente.size(); i++) {
+            for (int j = 0; j < BuscaTabuMochila01.solucao_corrente.size() + 2; j++) {
                 if (i == j) {
                     //Se o valor matriz for 1 remove ele
                     //senao adiciona
@@ -59,23 +58,23 @@ public class Vizinhanca extends SolucaoInicial {
 
     public void calculo_custos(int matriz[][]) {
         ArrayList<Integer> auxiliar = new ArrayList();
-        //System.out.println("oia-"+matriz.length);
-        for (int i = 0; i < solucao_inicial.size(); i++) {
-            for (int j = 0; j < solucao_inicial.size() + 2; j++) {
+        
+        for (int i = 0; i < BuscaTabuMochila01.solucao_corrente.size(); i++) {
+            for (int j = 0; j < BuscaTabuMochila01.solucao_corrente.size() + 2; j++) {
                 //System.out.println("solucao inicial = "+solucao_inicial.size());
-                if (j < solucao_inicial.size()) {
+                if (j < BuscaTabuMochila01.solucao_corrente.size()) {
                     float aux = matriz[i][j];
                     auxiliar.add(matriz[i][j]);
                 }
                 //Nas duas verificações abaixo, elas chamam uma função para calcular a soma
                 //do peso e do lucro
-                if (j == 10) {
+                if (j == BuscaTabuMochila01.solucao_corrente.size()) {
                     //System.out.println("i="+i+"j="+j);
                     matriz[i][j] = Funcao_soma_lucro(auxiliar);
                     //matriz[i][j+1] = Funcao_soma_peso(auxiliar);
                     //System.out.println("To aqui na soma Lucro-"+matriz[i][j]+"\tPeso-"+matriz[i][j]);
                 }
-                if (j == 11) {
+                if (j == (BuscaTabuMochila01.solucao_corrente.size()+1)) {
                     //System.out.println("i="+i+"j="+j);
                     // matriz[i][j] = Funcao_soma_lucro(auxiliar);
                     matriz[i][j] = Funcao_soma_peso(auxiliar);

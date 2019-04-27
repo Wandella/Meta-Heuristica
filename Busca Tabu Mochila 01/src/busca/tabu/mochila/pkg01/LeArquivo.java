@@ -29,8 +29,7 @@ public class LeArquivo {
         String nome = ler.nextLine();
 
         System.out.printf("\nConteúdo do arquivo texto:\n");
-        try {
-            FileReader arq = new FileReader(nome);
+        try (FileReader arq = new FileReader(nome)) {
             BufferedReader lerArq = new BufferedReader(arq);
 
             String linha = lerArq.readLine(); // lê a primeira linha
@@ -59,17 +58,15 @@ public class LeArquivo {
                 linha = lerArq.readLine(); // lê da segunda até a última linha
             }
 
-            arq.close();
-
-            /*for (int i = 0; i < 10; i++) {
-                System.out.println(""+lucro.get(i)+" - "+ peso.get(i));
-            }*/
-            return "Arquivo Lido com sucesso!";
         } catch (IOException e) {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
             return "Erro Not Found!";
 
         }
+        /*for (int i = 0; i < 10; i++) {
+        System.out.println(""+lucro.get(i)+" - "+ peso.get(i));
+        }*/
+        return "Arquivo Lido com sucesso!";
     }
 
 }
