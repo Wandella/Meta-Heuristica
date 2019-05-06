@@ -1,10 +1,8 @@
 
 package busca.tabu.mochila.pkg01;
-
-import static busca.tabu.mochila.pkg01.BuscaTabuMochila01.itens;
-import static busca.tabu.mochila.pkg01.BuscaTabuMochila01.solucao_inicial;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
+import busca.tabu.mochila.pkg01.BuscaTabuMochila01;
+import static busca.tabu.mochila.pkg01.BuscaTabuMochila01.solucao_corrente;
+import java.util.List;
 public class buscaTabu {
     public buscaTabu(){
         
@@ -13,44 +11,53 @@ public class buscaTabu {
     sem ultrapassar a capacidade da mochila
      */
     public int linhaEscolhia(int matriz[][], int itens) {
-        int maior = BuscaTabuMochila01.lucro_corrente;
+        int maior =0;
         int linha = 0;
         int temp[][];
+        
         //Trata se alguem já for tabu
-        matriz = trataValorTabu(matriz);
+        matriz = isTabu(matriz,itens);
+        
+       
+        
+        //Percorre a matriz procurando o maior valor da função objetivo
         for (int i = 0; i < itens; i++) {
             for (int j = 0; j < (itens + 2); j++) {
 
                 if (j == itens) {
-                    //System.out.println(""+matriz[i][itens]+">"+maior);
                     if (matriz[i][itens] > maior) {
-                        //System.out.println(""+ matriz[i][itens+1] +"<="+BuscaTabuMochila01.cap_max_mochila);
-                       if (matriz[i][itens + 1] <= BuscaTabuMochila01.cap_max_mochila) {
-                                maior = matriz[i][itens];
-                                linha = i;
-                            }
+                        System.out.println(""+ matriz[i][itens+1] +"<="+BuscaTabuMochila01.cap_max_mochila);
+                        if (matriz[i][itens + 1] <= BuscaTabuMochila01.cap_max_mochila) {
+                            maior = matriz[i][itens];
+                            linha = i;
                         }
                     }
-
+                    
                 }
             }
-
-        //verifica_limite(BuscaTabuMochila01);
-        verifica_limite();
-        BuscaTabuMochila01.listaTabu.add(maior);
-        return linha;
-    }
-    
-    public void solucao_corrente(int matriz[][],int linha) {
-        System.out.println(linha);
-        for (int i = linha; i <=linha; i++) {
-            for (int j = 0; j < BuscaTabuMochila01.solucao_inicial.size(); j++) {
-                BuscaTabuMochila01.solucao_corrente.set(i, matriz[i][j]);
             }
-        }
+            System.out.println("maior-> " + maior);
+            //verifica_limite(BuscaTabuMochila01);
+            verifica_limite();
+            BuscaTabuMochila01.funcao_objetivo.add(maior);
+            BuscaTabuMochila01.melhor_solucao=maior;
+            BuscaTabuMochila01.listaTabu.add(linha);//Adiciona como Tabu o movimento
+            return linha;
         
     }
-    public int[][] trataValorTabu(int matriz[][]){
+    
+    public List <Integer> solucao_corrente(int matriz[][],int linha) {
+        System.out.println("Da solucao corrente:"+linha);
+        for (int i = linha; i <=linha; i++) {
+            for (int j = 0; j < BuscaTabuMochila01.solucao_inicial.size(); j++) {
+                int teste = matriz[i][j];
+                solucao_corrente.set(i, teste);
+                
+            }
+        }
+        return solucao_corrente;
+    }
+    /*public int[][] trataValorTabu(int matriz[][]){
         for (int i = 0; i <itens; i++) {
             for (int j = 0; j < itens+2; j++) {
                 if(j==itens){
@@ -63,36 +70,52 @@ public class buscaTabu {
             }
         }
         return matriz;
-    }
+    }*/
     
     public void verifica_limite (){
-        if(BuscaTabuMochila01.listaTabu.size()<=BuscaTabuMochila01.maximo_elementos){
+        if(BuscaTabuMochila01.listaTabu.size()<BuscaTabuMochila01.qtd_elementos_tabu){
             //return true;
         }else{
             BuscaTabuMochila01.listaTabu.remove(0);
         }
     }
-    public boolean isTabu(int maior){
+    public int[][] isTabu(int m[][],int itens){
         int i;
-        System.out.println("olhaso->"+maior);
-        if(BuscaTabuMochila01.listaTabu.size()== 1){
+        //System.out.println("olhaso->"+maior);
+        /*if(BuscaTabuMochila01.listaTabu.size()== 1){
             System.out.println("Lista de->"+BuscaTabuMochila01.listaTabu.get(0));
             if( BuscaTabuMochila01.listaTabu.get(0)==maior){
                 return true; 
             }
             return false;
-        }else{
-            for(i=0; i<BuscaTabuMochila01.maximo_elementos ;i++){
-            System.out.println("Lista->"+BuscaTabuMochila01.listaTabu.get(i));
+        }else{*/
+           /* for(i=0; i<BuscaTabuMochila01.listaTabu.size() ;i++){
+            //System.out.println("Lista->"+BuscaTabuMochila01.listaTabu.get(i));
             if( BuscaTabuMochila01.listaTabu.get(i)==maior){
                 //System.out.println("TAbu");
                 return true;   
             }
         }
             return false;
-        }
+        //}*/
+           
+           
+           //Coloca zero na função objetivo por ela ser Tabu
+           int coluna=itens;
+           for (int j = 0; j < BuscaTabuMochila01.listaTabu.size(); j++) {
+               Integer linha = BuscaTabuMochila01.listaTabu.get(j);
+                    
+                   if(m[linha][linha]!=BuscaTabuMochila01.solucao_corrente.get(linha)){
+                        //É um movimento tabu
+                       m[linha][coluna]=0;
+                       System.out.println("linha->"+linha+"coluna->"+coluna);
+                       System.out.println("Valor funcao objetivo tabu->"+m[linha][coluna]);
+                   }
+                   
+               }
         
-      
+        
+      return m;
     }
     public void exibeTabu(){
         System.out.print("Lista Tabu:->");

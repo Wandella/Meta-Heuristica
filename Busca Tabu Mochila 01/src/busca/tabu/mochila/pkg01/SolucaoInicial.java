@@ -67,7 +67,9 @@ public class SolucaoInicial {
         BuscaTabuMochila01.lucro_corrente = BuscaTabuMochila01.lucro_inicial;
         BuscaTabuMochila01.peso_inicial = Funcao_soma_peso(solucao_inicial);
         BuscaTabuMochila01.peso_corrente = BuscaTabuMochila01.peso_inicial;
-        BuscaTabuMochila01.listaTabu.add(BuscaTabuMochila01.lucro_inicial);
+        BuscaTabuMochila01.melhor_solucao = BuscaTabuMochila01.lucro_inicial;
+        //BuscaTabuMochila01.listaTabu.add(BuscaTabuMochila01.lucro_inicial);
+        BuscaTabuMochila01.funcao_objetivo.add(BuscaTabuMochila01.lucro_inicial);
         System.out.println("capacidade mochila="+cap_max_mochila);
         System.out.println("Lucro Inicial ="+lucro_inicial);
         System.out.println("Peso inicial="+peso_inicial);
