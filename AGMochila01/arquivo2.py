@@ -11,7 +11,7 @@ capacidade_mochila = 0
 def le_arquivo():
     global qtd_itens, lucro,peso,capacidade_mochila;
     i=0
-    arq = open('/home/wandella/Documentos/Meta/Trabalhos/TP3/teste', 'r')
+    arq = open('/home/wandella/Documentos/Meta/Trabalhos/TP3/knapPI_2_100_1000', 'r')
     #linha = arq.readline()
     for linha in arq:
         valores = linha.split()
@@ -45,6 +45,11 @@ inicio_pop_ZEROES = False
 
 # Avaliação dos elementos
 def fitness(target):
+    """
+    fitness (alvo) retornará o valor de adequação de permutação chamado "alvo".
+    Pontuações mais altas são melhores e são iguais ao valor total dos itens na permutação. 
+    Se total_weight for maior que a capacidade, retorne 0 porque a permutação não pode ser usada.
+    """
     #print("O target->",target)
     total_value = 0
     total_weight = 0
@@ -54,24 +59,24 @@ def fitness(target):
             break
         if (i == 1):
             total_value = total_value + lucro[index] 
+            
             total_weight = total_weight + peso[index]
             #print("Total Peso",total_weight,"Total valor ",total_value)
         index += 1
         
-    #print("Total Peso",total_weight,"> Capacidade Mochila",capacidade_mochila)
+    print("Total Peso",total_weight,"> Capacidade Mochila",capacidade_mochila)
     if total_weight > capacidade_mochila:
-        pena = total_value + (1000 * (capacidade_mochila - total_weight))
-        print("Pena", pena)
+        print("To aqui!")
         #Capacidade da mochila tem que ser menor que o total
-        return pena
+        return 0
     else:
-        #print("Olha so o valor", total_value)
+        print("Olha so o valor", total_value)
         return total_value
 
 #Mutação
 def mutate(target):
     """
-    troca os elementos de  0 -> 1 ou 1 -> 0.
+    Changes a random element of the permutation array from 0 -> 1 or from 1 -> 0.
     """ 
     r = random.randint(0,len(target)-1)
     if target[r] == 1:
@@ -125,9 +130,9 @@ def main():
     #Lendo os itens do arquivo
     lucro,peso = le_arquivo()
     # Número máximo de gerações que o algoritmo executará
-    GEN_MAX = 100
+    GEN_MAX = 10
     #Tamanho da população
-    tamanho_populacao = 50
+    tamanho_populacao = 100
     #print("Quantidade de itens",tamanho_populacao)
     generation = 1
 
@@ -139,23 +144,22 @@ def main():
         print ("Generation %d with %d" % (generation,len(population)))
         population = sorted(population, key=lambda x: fitness(x), reverse=True)
         for i in population:        
-            print ("%s, fit: %s" % (str(i), fitness(i)))
-            #print (" fit: %s" % (fitness(i)))
-            #if int(fitness(i)) >= maior:
-             #   maior = int(fitness(i))
-            #elif int(fitness(i)) < menor :
-             #   menor = int(fitness(i))
+            #print ("%s, fit: %s" % (str(i), fitness(i)))
+            print (" fit: %s" % (fitness(i)))
+            if int(fitness(i)) >= maior:
+                maior = int(fitness(i))
+            elif int(fitness(i)) < menor :
+                menor = int(fitness(i))
+        lista.append(menor)
+        lista.append(maior)
+        menor = 0
+        maior = 0
+        # print("Debug 1", population)
         population = evolve_population(population)
         generation += 1
-        #lista.append(menor)
-        #lista.append(maior)
-        #menor = 0
-        #maior = 0
-        # print("Debug 1", population)
-        
 
-print("_________Estatisticas______")
-print("Maior valor->", max(lista),"Menor Valor:",min(lista))
-print("Média->", statistics.mean(lista),"Desvio Padrão:",statistics.pstdev(lista))
+        print("_________Estatisticas______")
+        print("Maior valor->", max(lista),"Menor Valor:",min(lista))
+        print("Média->", statistics.mean(lista),"Desvio Padrão:",statistics.pstdev(lista))
 if __name__ == "__main__":
     main()

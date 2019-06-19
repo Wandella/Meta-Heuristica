@@ -1,27 +1,28 @@
 import random
 import statistics
-
+import grafico 
 
 lucro = []
 peso = []
-qtd_itens = 0
-capacidade_mochila = 0
+qtd_itens = 0.0
+capacidade_mochila = 0.0
 
 #Lendo arquivo
-def le_arquivo():
+def le_arquivo(nome):
     global qtd_itens, lucro,peso,capacidade_mochila;
     i=0
-    arq = open('/home/wandella/Documentos/Meta/Trabalhos/TP3/teste', 'r')
+    #arq = open('AGMochila01/'+nome, 'r')
+    arq = open('/home/wandella/Documentos/Meta/Trabalhos/Meta-Heuristica/AGMochila01/'+nome, 'r')
     #linha = arq.readline()
     for linha in arq:
         valores = linha.split()
         if i==0:
-            qtd_itens = int(valores[0])
-            capacidade_mochila = int(valores[1])
-            #print('Quantidade de itens',qtd_itens,'Capacidade',capacidade_mochila)
+            qtd_itens = float(valores[0])
+            capacidade_mochila = float(valores[1])
+            print('Quantidade de itens',qtd_itens,'Capacidade',capacidade_mochila)
         else:   
-            lucro.append(int(valores[0]))
-            peso.append(int(valores[1]))  
+            lucro.append(float(valores[0]))
+            peso.append(float(valores[1]))  
             #print('Lucro', lucro[i-1],'Peso', peso[i-1])
         i=i+1
     arq.close()   
@@ -35,9 +36,9 @@ def populacao_inicial(amount):
 
 def geracao_individual():
     if inicio_pop_ZEROES:
-        return [random.randint(0,0) for x in range (0,qtd_itens)]
+        return [random.randint(0,0) for x in range (0,int(qtd_itens))]
     else:
-        return [random.randint(0,1) for x in range (0,qtd_itens)]
+        return [random.randint(0,1) for x in range (0,int(qtd_itens))]
 
 
 
@@ -60,7 +61,7 @@ def fitness(target):
         
     #print("Total Peso",total_weight,"> Capacidade Mochila",capacidade_mochila)
     if total_weight > capacidade_mochila:
-        pena = total_value + (1000 * (capacidade_mochila - total_weight))
+        pena = total_value - (1000 * (total_weight-capacidade_mochila))
         print("Pena", pena)
         #Capacidade da mochila tem que ser menor que o total
         return pena
@@ -122,40 +123,45 @@ def evolve_population(pop):
 
 def main():
     lista = []
+    #nome do arquivo
+    arquivo = input()
+    #arquivo = 'ue'
     #Lendo os itens do arquivo
-    lucro,peso = le_arquivo()
+    lucro,peso = le_arquivo(arquivo)
     # Número máximo de gerações que o algoritmo executará
-    GEN_MAX = 100
+    GEN_MAX = 30
     #Tamanho da população
-    tamanho_populacao = 50
+    tamanho_populacao = 300
     #print("Quantidade de itens",tamanho_populacao)
     generation = 1
 
     #Gerar a população inicial
     population = populacao_inicial(tamanho_populacao)
     maior = 0
-    menor = 0
-    for g in range(0,GEN_MAX):
-        print ("Generation %d with %d" % (generation,len(population)))
-        population = sorted(population, key=lambda x: fitness(x), reverse=True)
-        for i in population:        
-            print ("%s, fit: %s" % (str(i), fitness(i)))
-            #print (" fit: %s" % (fitness(i)))
-            #if int(fitness(i)) >= maior:
-             #   maior = int(fitness(i))
-            #elif int(fitness(i)) < menor :
-             #   menor = int(fitness(i))
-        population = evolve_population(population)
-        generation += 1
-        #lista.append(menor)
-        #lista.append(maior)
-        #menor = 0
-        #maior = 0
-        # print("Debug 1", population)
-        
+    
+    for count in range(30):
+        for g in range(0,GEN_MAX):
+            print ("Generation %d with %d" % (generation,len(population)))
+            population = sorted(population, key=lambda x: fitness(x), reverse=True)
+            for i in population:        
+                #print ("%s, fit: %s" % (str(i), fitness(i)))
+                print (" fit: %s" % (fitness(i)))
+                if float(fitness(i)) >= maior:
+                    maior = float(fitness(i))
+            population = evolve_population(population) #Retorna toda a população
+            generation += 1
+        lista.append(maior)
+        maior = 0
+        generation=1
 
-print("_________Estatisticas______")
-print("Maior valor->", max(lista),"Menor Valor:",min(lista))
-print("Média->", statistics.mean(lista),"Desvio Padrão:",statistics.pstdev(lista))
+    print("Debug 1", len(lista))
+
+    print("_________Estatisticas________")
+    print("Maior valor->", max(lista),"Menor Valor:",min(lista))
+    print("Média->", statistics.mean(lista),"Desvio Padrão:",statistics.pstdev(lista))
+
+    #Gera graficos a partir dos valores passados
+    grafico.grafico(lista,arquivo)
+
 if __name__ == "__main__":
     main()
